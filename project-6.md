@@ -3,135 +3,142 @@
 ### Entire View of the newly created Block Devices 
 
 `lsblk`
-![list-of-available-volumes](./Images-Webserver/)
-
-
+![list-of-available-volumes](./Images-Webserver/f-disk-partition.png)
 
 ### Partioning Block Devices
 `sudo gdisk /dev/xvdf`
-![adding-partition-xvdf](./images/f-disk.png)
-![adding-partition-xvdg](./images/xvdg.png)
-![adding-partition-xvdh](./images/xvdh.png)
+`sudo gdisk /dev/xvdg`
+`sudo gdisk /dev/xvdh`
+![adding-partition-xvdf](./Images-Webserver/f-disk.png)
+![adding-partition-xvdg](./Images-Webserver/xvdg.png)
+![adding-partition-xvdh](./Images-Webserver/xvdh.png)
+
 
 ### Entire View of all Partitioned Block
 `lsblk`
-![Entire-view-of-all-partitioned-Blocks](./Images/Entire-partition.png)
+![Entire-view-of-all-partitioned-Blocks](./Images-Webserver/Entire-partition.png)
 
 ### LVM2 Installation
 `sudo yum install lvm2`
-![Installing-LVM2](./Images/installing-lvm2.png)
+![Installing-LVM2](./Images-Webserver/installing-lvm2.png)
 
 ### LVM2 Installed
 `sudo lvmdiskscan`
-![Installed-LVM2](./Images/lvmdiskscan.png)
+![Installed-LVM2](./Images-Webserver/lvmdiskscan.png)
 
 ### Marking the Partitions as Physical Volumes
 `sudo pvcreate /dev/xvdf1 /dev/xvdg1 /dev/xvdh1`
 `sudo pvs`
-![Marking-partitions-as-physical-volumes](./Images/creating-physical-volume.png)
+![Marking-partitions-as-physical-volumes](./Images-Webserver/creating-physical-volume.png)
 
 
 ### Creating-Volume-Group
 `sudo vgcreate webdata-vg /dev/xvdh1 /dev/xvdg1 /dev/xvdf1`
 `sudo vgs`
-![Creating-Volume-Group](./Images/vg-created.png)
+![Creating-Volume-Group](./Images-Webserver/vg-created.png)
 
 
 ### Creating-Logical-Volumes
 `sudo lvcreate -n apps-lv -L 14G webdata-vg`
 `sudo lvcreate -n logs-lv -L 14G webdata-vg`
 `sudo lvs`
-![Logical-Volumes-Created](./Images/logical-volume-created.png)
+![Logical-Volumes-Created](./Images-Webserver/logical-volume-created.png)
 
 ### Formatting-Logical-Volumes-with-EXT4-Filesystem
 `sudo mkfs -t ext4 /dev/webdata-vg/app-lv`
 `sudo mkfs -t ext4 /dev/webdata-vg/logs-lv`
-![Formatting-Logical-Volumes](./Images-WebServer/formating-logical-volumes-with-ext4-file-system.png)
+![Formatting-Logical-Volumes](./Images-WebServer/formatting-logical-volumes.png)
 
-### Creating-Directory-to-Store-website-files
+### Creating-Directory-to-Store-website-files and mounting web files
 `sudo mkdir -p /var/www/html`
-![Directory-for-website-files](./Images-WebServer/creating-directory-to-store-website-files.png)
+![Directory-for-website-files](./Images-WebServer/create-dir%26mount-apps-lv.png)
 
-### Creating-Directory-to-Store-Log-Files
+### Creating-Directory-to-Store-Log-Files and mount log files
 `sudo mkdir -p /home/recovery/logs`
-![Directory-for-Log-files](./Images-WebServer/creating-directory-to-store-log-files.png)
+![Directory-for-Log-files](./Images-WebServer/create%20recovery%26logfiles.png)
 
-### Mounting-Website-files-directory-on-app-lv
-`sudo mount /dev/webdata-vg/apps-lv /var/www/html`
-![Mounting-Directory-on-app-lv](./Images-WebServer/app-lv-mounted-on-directory-html-created.png)
 
-### Mounting-Log-files-directory-on-logs-lv
-`sudo mount /dev/webdata-vg/logs-lv /var/log`
-![Mounting-Log-Directory-on-logs-lv](./Images-WebServer/log-files-mounted-on-logs-lv.png)
 
 ### Updating-fstab
 `sudo vi /etc/fstab`
-![fstab-updated](./Images-WebServer/fstab-updated.png)
+![fstab-updated](./Images-WebServer/wordpress-mount.png)
 
 ### Entire-setup-of-Volumes
 `df -h`
-![View-of-the-entire-setup-of-volumes](./Images-WebServer/entire-setup-view-of-volumes.png)
-
+![View-of-the-entire-setup-of-volumes](./Images-Webserver/mount-reload.png)
+![mountpoints](./Images-WebServer/mountpoints.png)
 ## **Preparing Database Server**
 
 ### Volumes-Attached-for-DB-Server
 `lsblk`
-![volumes-attached](./Images-DBServer/Volumes-attached-for-DBServer.png)
+![volumes-attached](./Images-Database/disk.png)
 
 
 ### Volumes-successfully-partitioned
 `sudo gdisk /dev/xvdf`
-![volumes-successfully-partitioned](./Images-DBServer/Successful-partitioning-of-volumes.png)
+`sudo gdisk /dev/xvdg`
+![volumes-successfully-partitioned](./Images-Database/xvdf-db.png)
+![volumes-successfully-partitioned](./Images-Database/xvdg-db.png)
 
 ### Volumes-marked-as-physical-volumes
 `sudo pvcreate /dev/xvdf1 /dev/xvdg1 /dev/xvdh1`
-![Physical-volumes-created](./Images-DBServer/Volumes-marked-as-physical-volumes.png)
+![Physical-volumes-created](./Images-Database/physical-volumes.png)
 
 ### Installing LVM2 for DB Server
 `sudo yum install lvm2`
-![LVM2-Installed](./Images-DBServer/lvm2-installed-for-dbSever.png)
-
-### Creating Volume Groups for DBServer
+`sudo lvmdiskscan`
+![LVM2-Installed](./Images-Database/lvm2.png)
+![LVM2-Installed](./Images-Database/lvmdiskscan.png)
+### Creating Volume Groups for DBServer and Logical Volume
 `sudo vgcreate vg-dbdatabase /dev/xvdf1 /dev/xvdg1 /dev/xvdh1`
 `sudo vgs`
-![Volume-Group-Created](./Images-DBServer/volumes-successfully-attached-to-a-volume-group.png)
-
-### Creating Logical Volumes
-`sudo lvcreate -n db-lv -l 20G vg-dbdatabase`
-`sudo vgs`
+`sudo lvcreate -n db-lv -l 14G vg-dbdatabase`
 `sudo lvs`
-![Logical-Volumes-Created](./Images-DBServer/logical-volume-created-for-dbServer.png)
+![Volume-Group-Created](./Images-Database/vg-lv-created.png)
+
+
 
 ### Formatting-Logical-Volumes-with-EXT4-Filesystem
 `sudo mkfs -t ext4 /dev/vg-dbdatabase/db-lv`
-![Logical-volume-formatted](./Images-DBServer/formatting-logical-volume-with-ext4.png)
+![Logical-volume-formatted](./Images-Database/format-disk.png)
 
 ### Logical Volume Mounted on DB Directory
 `sudo mount /dev/vg-dbdatabase/db-lv /db`
-![Logical-volume-Mounted](./Images-DBServer/logical-volume-mounted-on-db-directory.png)
+`sudo mount -a`
+![Logical-volume-Mounted](./Images-Database/mount%25reload.png)
 
 ### Updating fstab for DB
 `sudo vi /etc/fstab`
-![fstab-Updated-for-DB](./Images-DBServer/fstab-updated.png)
+![fstab-Updated-for-DB](./Images-Database/fstab.png)
+![Mountpoints](./Images-Database/mountpoints.png)
 ### mysql installation on DBServer
 `sudo yum update`
 `sudo yum install mysql-server`
-![my-sql-server-installed](./Images-DBServer/my-sql-server-installed-on-dbserver.png)
+![my-sql-server-installed](./Images-Database/mysql.png)
 
 ## **Installing Wordpress on Webserver**
 ### Installing wget and its dependencies
 `sudo yum -y install wget httpd php php-mysqlnd php-fpm php-json`
-![wget-and-dependencies-installation](./Images-WebServer/wget-and-it-dependencies-installed.png)
+![wget-and-dependencies-installation](./Images-Webserver/installing-apache%26dependecies.png)
+
+## **Installing PHP and it's dependecies**
+##### Had to use another repo and key from php documentation
+`sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm`
+`sudo yum install yum-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm`
+`sudo yum module list php`
+`sudo yum module reset php`
+`sudo yum module enable php`
+`sudo yum install php php-opcache php-gd php-curl php-mysqlnd`
+![fstab-Updated-for-DB](./Images-Webserver/installing-php-dependecies.png)
+![fstab-Updated-for-DB](./Images-Webserver/php-installed%26enabled.png)
+![fstab-Updated-for-DB](./Images-Webserver/php.png)
 
 ### Download wordpress and copy wordpress to var/www/html
 ` mkdir wordpress`
-
 `cd wordpress`
-
 `sudo wget http://wordpress.org/latest.tar.gz`
-
 `cp -R wordpress /var/www/html/`
-![wordpress-download](./Images-WebServer/WordPress-downloaded-and-copied-to-var-www-html.png)
+![wordpress-download](./Images-WebServer/wordpress.png)
 
 ### Configuring SElinux Policies
 `sudo chown -R apache:apache /var/www/html/wordpress`
@@ -139,20 +146,20 @@
 `sudo chcon -t httpd_sys_rw_content_t /var/www/html/wordpress -R`
 
 `sudo setsebool -P httpd_can_network_connect=1`
-![Selinux-Policies-configuration](./Images-WebServer/SElinux-policies-configured.png)
+![Selinux-Policies-configuration](./Images-WebServer/selinux.png)
 
 ### Configure DB to work with WordPress
 `show databases`
-![show-databases-command-executed-on-webserver-to-show-list-of-databases-on-dbserver](./Images-WebServer/show-databases-command-executed-on-webserver-to-show-list-of-databases-on-dbserver.png)
+![show-databases-command-executed-on-webserver-to-show-list-of-databases-on-dbserver](./Images-Database/database.png)
 
 ### Configure WordPress to connect to remote database
-`sudo mysql -u dbuser -p -h 172.31.30.247`
-![User-connected-to-Dbserver-from-Webserver](./Images-WebServer/user-connected-to-dbserver-successfully-from-webserver.png)
+`sudo mysql -u myuser -p -h 172.31.22.12`
+![User-connected-to-Dbserver-from-Webserver](./Images-Database/connect-wordpress-with-remote-user.png)
 
 ### link to WordPress accessed from Browser
-`http://54.89.100.91/wordpress/`
+`http://3.140.246.8/wordpress/`
 ![WordPress-accessed-from-Browser](./Images-WebServer/Wordpress-accessed.png)
 
 ### WordPress successfully Deployed
-`http://54.89.100.91/wordpress/`
+`http://3.140.246.8/wordpress/`
 ![WordPress-Deployed](./Images-WebServer/successfully-deployed-wordpress.png)
